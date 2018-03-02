@@ -29,8 +29,8 @@
         <td contenteditable='true'><%= elm.prenom %></td>
         <td contenteditable='true'><%= elm.telephone %></td>                
         <td contenteditable='true'><%= elm.courriel %></td>    
-        <td><a class="detruire" href="/detruire/<%= elm._id %>"><i class="fas fa-trash-alt" aria-hidden="true"></i></a></td>
-        <td><a class='modifier' href="#"><i class="far fa-save" aria-hidden="true"></i></a></td>
+        <td><a class="detruire" href="#"<%= elm._id %>"><i class="fas fa-trash-alt" aria-hidden="true"></i></a></td>
+        <td><a class='Supprimer' href="#"><i class="far fa-save" aria-hidden="true"></i></a></td>
     </tr>
     <% } %>
 </table>
@@ -72,7 +72,29 @@
             })
         }
 
-        
+    let elmSupprimer = document.querySelectorAll('.detruire')
+    console.log(elmSupprimer.length)
+    for (elm of elmSupprimer)
+        {
+            elm.addEventListener('click', function(){
+                console.log(this.parentElement.parentElement.id)
+                let elmTr = this.parentElement.parentElement 
+                let _id = elmTr.querySelector('td:nth-child(1)').innerHTML
+
+                elmForm = document.getElementById('frmUpdate')
+                console.log('ok')
+                xhr = new XMLHttpRequest();
+                xhr.open('GET', "/ajax_detruire/"+_id, true);
+                data = {
+                "_id" : _id
+                }
+                console.log(data)
+                sData = JSON.stringify(data);
+                xhr.setRequestHeader('Content-type', 'application/json');
+                xhr.send(sData);
+                xhr.addEventListener("readystatechange", traiterRequest, false);
+            })
+        }    
 
     function traiterRequest(e)
     {
