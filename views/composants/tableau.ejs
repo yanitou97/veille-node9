@@ -20,7 +20,8 @@
         <th><a href="/trier/nom/<%= objOrdre.nom %>"><%= __('nom') %><i class="fas fa-<%= (objOrdre.nom=='asc'?'sort-up': 'sort-down') %>"></i></a></th>
         <th><a href="/trier/prenom/<%= objOrdre.prenom %>"><%= __('prenom') %><i class="fas fa-<%= (objOrdre.prenom=='asc'?'sort-up': 'sort-down') %>"></i></a></th>        
         <th><a href="/trier/telephone/<%= objOrdre.telephone %>"><%= __('telephone') %><i class="fas fa-<%= (objOrdre.telephone=='asc'?'sort-up': 'sort-down') %>"></i></a></th>  
-        <th><a href="/trier/courriel/<%= objOrdre.courriel %>"><%= __('courriel') %><i class="fas fa-<%= (objOrdre.courriel=='asc'?'sort-up': 'sort-down') %>"></i></a></th>      
+        <th><a href="/trier/courriel/<%= objOrdre.courriel %>"><%= __('courriel') %><i class="fas fa-<%= (objOrdre.courriel=='asc'?'sort-up': 'sort-down') %>"></i></a></th> 
+        <th colspan="2"><a class="ajouter" href="#"><i class="fas fa-plus"></i></a></th>     
     </tr>
     <%  for (elm of adresses) {%>
     <tr>
@@ -29,8 +30,8 @@
         <td contenteditable='true'><%= elm.prenom %></td>
         <td contenteditable='true'><%= elm.telephone %></td>                
         <td contenteditable='true'><%= elm.courriel %></td>    
-        <td><a class="detruire" href="#"<%= elm._id %>"><i class="fas fa-trash-alt" aria-hidden="true"></i></a></td>
-        <td><a class='Supprimer' href="#"><i class="far fa-save" aria-hidden="true"></i></a></td>
+        <td><a class="detruire" href="#"><i class="fas fa-trash-alt" aria-hidden="true"></i></a></td>
+        <td><a class='modifier' href="#"><i class="far fa-save" aria-hidden="true"></i></a></td>
     </tr>
     <% } %>
 </table>
@@ -94,22 +95,97 @@
                 xhr.send(sData);
                 xhr.addEventListener("readystatechange", traiterRequest, false);
             })
-        }    
+        }
+
+    let elmAjouter = document.querySelectorAll('.ajouter')
+    console.log(elmAjouter.length)
+    for (elm of elmAjouter)
+        {
+            elm.addEventListener('click', function(){
+                console.log(this.parentElement.parentElement.id)
+                let elmTr = this.parentElement.parentElement 
+
+                elmForm = document.getElementById('frmUpdate')
+                console.log('ok')
+                xhr = new XMLHttpRequest();
+                xhr.open('GET', "/ajax_ajouter", true);
+                data = {
+                    
+                }
+                console.log(data)
+                sData = JSON.stringify(data);
+                xhr.setRequestHeader('Content-type', 'application/json');
+                xhr.send(sData);
+                xhr.addEventListener("readystatechange", traiterRequestAjouter, false);
+            })
+        }         
 
     function traiterRequest(e)
+    {
+         console.log("xhr.readyState = " + xhr.readyState)
+         console.log("xhr.status = " + xhr.status)
+         if(xhr.readyState == 4 && xhr.status == 200)
+         {
+             console.log('ajax fonctionne')
+             var response = JSON.parse(xhr.responseText);
+             console.log(response)
+             console.log("response._id = " + response._id)
+             console.log(xhr.responseText);
+
+        // elmLigne.style.backgroundColor = "#0f0"
+         }
+    }
+
+     function traiterRequestAjouter(e)
     {
      console.log("xhr.readyState = " + xhr.readyState)
      console.log("xhr.status = " + xhr.status)
      if(xhr.readyState == 4 && xhr.status == 200)
      {
-     console.log('ajax fonctionne')
-     var response = JSON.parse(xhr.responseText);
-     console.log(response)
-     console.log("response._id = " + response._id)
-     console.log(xhr.responseText);
+         console.log('ajax fonctionne')
+         let response = JSON.parse(xhr.responseText);
+         console.log(response)
+         console.log("response._id = " + response._id)
+         console.log(xhr.responseText);
 
-    // elmLigne.style.backgroundColor = "#0f0"
-     }
+         let tr = document.createElement("TR");
+         let trtd;
+            for (let i=0;i<7;i++){
+                let td = document.createElement("TD");
+                if(i==0){
+                    td.innerHTML = response._id
+                }
+                if(i<1 || i>3){
+                    td.setAttribute('contenteditable', true)
+                }
+                if(i==5){
+                    let iD = document.createElement("I");
+                    iD.classList.add("fas")
+                    iD.classList.add("fa-trash-alt")
+                    iD.setAttribute('aria-hidden', true);
+                    let aD = document.createElement("A");
+                    aD.classList.add('detruire');
+                    aD.setAttribute('href', '#');
+                    let aDiD = aD.appendChild(iD);
+                    td.appendChild(aDiD);  
+                }
+                if(i==6){
+                    let iS = document.createElement("I");
+                    iS.classList.add("far")
+                    iS.classList.add("fa-save")
+                    iS.setAttribute('aria-hidden', true);
+                    let aS = document.createElement("A");
+                    aS.classList.add('modifier');
+                    aS.setAttribute('href', '#');
+                    let aSiS = aS.appendChild(iS); 
+                    td.appendChild(aSiS);  
+                }
+                trtd = tr.appendChild(td);
+            }
+            document.getElementsByTagName("TABLE")[0].appendChild(trtd)
+
+        // elmLigne.style.backgroundColor = "#0f0"
+         }
 }    
 
 

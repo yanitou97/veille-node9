@@ -163,3 +163,12 @@ app.get('/ajax_detruire/:id', (req,res) => {
    	})
 })
 
+app.get('/ajax_ajouter', (req,res) => {
+   db.collection('adresse').insert(req.body, (err, result) => {
+   if (err) return console.log(err)
+       console.log('sauvegarder dans la BD')
+   		res.send(JSON.stringify(req.body));
+   // res.status(204)
+   })
+})
+
